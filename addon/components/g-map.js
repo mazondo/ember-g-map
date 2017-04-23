@@ -38,6 +38,7 @@ export default Ember.Component.extend({
     }
     this.setZoom();
     this.setCenter();
+    this.registerEvents();
     if (this.get('shouldFit')) {
       this.fitToMarkers();
     }
@@ -137,5 +138,30 @@ export default Ember.Component.extend({
   groupMarkerClicked(marker, group) {
     let markers = this.get('markers').without(marker).filterBy('group', group);
     markers.forEach((marker) => marker.closeInfowindow());
+  },
+
+  registerEvents() {
+    const map = this.get("map");
+    if (isPresent(map)) {
+      map.addListener("dragend", (e) => {
+        this._sendBounds();
+      });
+      map.addListener("zoom_changed", (e) => {
+        this._sendBounds();
+      });
+    }
+  },
+
+  _sendBounds() {
+    const map = this.get("map");
+    if (isPresent(map)) {
+      const bounds = map.getBounds();
+      if (isPresent(bounds)) {
+        const ne = {lat: bounds.getNorthEast().lat(), lng: bounds.getNorthEast().lng()}
+        const sw = {lat: bounds.getSouthWest().lat(), lng: bounds.getSouthWest().lng()}
+        const center = {lat: bounds.getCenter().lat(), lng: bounds.getCenter().lng()}
+        this.sendAction("boundsChanged", {ne, sw, center});
+      }
+    }
   }
 });
