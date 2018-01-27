@@ -53,7 +53,7 @@ module.exports = {
       }
 
       src += '?' + params.join('&');
-      content = '<script type="text/javascript" src="' + src + '" defer></script>';
+      content = '<script type="text/javascript" src="' + src + '" async defer></script>';
 
       var exclude = gMapConfig.exclude;
       if (exclude) {
