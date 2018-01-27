@@ -53,7 +53,7 @@ module.exports = {
       }
 
       src += '?' + params.join('&');
-      content = '<script type="text/javascript" src="' + src + '"></script>';
+      content = '<script type="text/javascript" src="' + src + '" defer></script>';
 
       var exclude = gMapConfig.exclude;
       if (exclude) {
