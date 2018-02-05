@@ -12,7 +12,7 @@ module.exports = {
   contentFor: function(type, config) {
     var content = '';
 
-    if (type === 'head') {
+    if (type === 'body-footer') {
       var src = '//maps.googleapis.com/maps/api/js';
       var gMapConfig = config['g-map'] || {};
       var params = [];
@@ -53,7 +53,7 @@ module.exports = {
       }
 
       src += '?' + params.join('&');
-      content = '<script type="text/javascript" src="' + src + '" async defer></script>';
+      content = '<script type="text/javascript" src="' + src + '"></script>';
 
       var exclude = gMapConfig.exclude;
       if (exclude) {
