@@ -9,6 +9,7 @@ const GMapMarkerComponent = Ember.Component.extend({
   classNames: ['g-map-marker'],
 
   map: computed.alias('mapContext.map'),
+  position: 0,
 
   init() {
     this._super(...arguments);
@@ -29,7 +30,15 @@ const GMapMarkerComponent = Ember.Component.extend({
       && (typeof FastBoot === 'undefined')) {
       const marker = new google.maps.Marker();
       this.set('marker', marker);
+
+      if (this.get('animate')) {
+        let { speed, coords } = this.get('animate');
+        run.later(this, () => {
+          this.doAnimation(speed, coords, 0);
+        }, 1000);
+      }
     }
+
     this.setPosition();
     this.setZIndex();
     this.setIcon();
@@ -39,6 +48,23 @@ const GMapMarkerComponent = Ember.Component.extend({
     this.setMap();
     this.setOnClick();
     this.setOnDrag();
+  },
+
+  doAnimation(speed, coords, index) {
+    let pos = this.get('position') || 0;
+    let current = coords.objectAt(pos);
+    let latlng = new google.maps.LatLng(current.get('lat'), current.get('lng'));
+
+    this.get('marker').setPosition(latlng);
+    this.get('marker.lat', current.get('lat'));
+    this.get('marker.lng', current.get('lng'));
+    this.set('position', pos + 1);
+
+    run.later(this, () => {
+      if (coords.objectAt(this.get('position'))) {
+        this.doAnimation(speed, coords, this.get('position'));
+      }
+    }, speed);
   },
 
   willDestroyElement() {
